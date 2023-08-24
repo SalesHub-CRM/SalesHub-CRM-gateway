@@ -2,4 +2,23 @@ spring:
   cloud:
     gateway:
       routes:
-        - id:
+        - id: API-SERVICE
+          uri: lb://API-SERVICE
+          predicates:
+            - Path= /**
+
+
+
+
+
+  application:
+    name: gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+
+server:
+  port: 8081
