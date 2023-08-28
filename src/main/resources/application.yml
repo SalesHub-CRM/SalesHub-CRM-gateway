@@ -5,7 +5,12 @@ spring:
         - id: API-SERVICE
           uri: lb://API-SERVICE
           predicates:
-            - Path= /**
+            - Path= /API/**
+
+        - id: AUTH-SERVICE
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path= /auth/**
 
 
 
