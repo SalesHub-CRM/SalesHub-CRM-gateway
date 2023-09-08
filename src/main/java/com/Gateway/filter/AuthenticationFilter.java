@@ -21,7 +21,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
         super(Config.class);
     }
 
-    @Override
+/*    @Override
     public GatewayFilter apply(Config config) {
         return ((exchange, chain) -> {
             if (validator.isSecured.test(exchange.getRequest())) {
@@ -46,6 +46,43 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
             }
             return chain.filter(exchange);
         });
+    }
+
+    public static class Config {
+
+    }*/
+
+
+    @Override
+    public GatewayFilter apply(Config config) {
+        return (exchange, chain) -> {
+            if (validator.isSecured.test(exchange.getRequest())) {
+                System.out.println(exchange.getRequest());
+                // Header contains token or not
+                if (!exchange.getRequest().getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) {
+                    throw new RuntimeException("Missing authorization header");
+                }
+
+                String authHeader = exchange.getRequest().getHeaders().get(HttpHeaders.AUTHORIZATION).get(0);
+                if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                    authHeader = authHeader.substring(7);
+
+                    System.out.println(authHeader);
+                }
+
+                try {
+                    jwtUtil.validateToken(authHeader);
+
+                } catch (Exception e) {
+                    System.out.println("Invalid access...!");
+                    throw new RuntimeException("Unauthorized access to application");
+                }
+            }
+
+            System.out.println(exchange);
+
+            return chain.filter(exchange);
+        };
     }
 
     public static class Config {
